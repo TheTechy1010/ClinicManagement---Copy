@@ -1,0 +1,148 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model IPagedList<ClinicManagement.Core.Models.Patient>
+@{
+    ViewBag.Title = "All Doctors";
+}
+@using (Html.BeginForm("Index", "Patients", FormMethod.Get, new { id = "searchForm" }))
+{
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Order By:</label><br />
+                <select name="sortOrder" class="selectpicker w-100 form-control form-control-sm">
+                    <option value="">--Select--</option>
+                    <option value="name_desc">Name-Descending</option>
+                    <option value="date">Date Added</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Search By:</label>
+                <input type="text" class="form-control form-control-sm" name="searchString" id="searchString" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label id="srch">Search By </label>
+            <button type="submit" id="btnSearch" class="btn btn-outline-secondary btn-sm btn-block">Search
+                <img id="loadingButton" hidden src="~/Content/Images/spinner.gif" style="height:30px;width:30px;" />
+            </button>
+            
+
+        </div>
+
+    </div>
+}
+@if (ViewBag.Search != null)
+{
+    <div class="p-1">
+        <span class="text-danger">Search results for</span><h5 class="text-success">"@ViewBag.Search"</h5>
+    </div>
+}
+@if (Model.Count != 0)
+{
+    <table id="patTable" class="table table-striped table-bordered table-responsive-sm w-100" style="width:100%">
+        <thead>
+            <tr>
+                <th>Token</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Actions</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var pat in Model)
+            {
+                <tr>
+                    <td>@pat.Token</td>
+                    <td>
+                        <a class="btn btn-link" href="/Patients/Details/@pat.Id">@pat.Name</a>
+                    </td>
+                    <td>@pat.Phone</td>
+                    <td>@pat.Address,@pat.City.Name</td>
+                    <td>
+                        <a href="/Patients/UpdatePatient/@pat.Id">Edit</a>
+                        <a class="js-delete text-danger" data-patid="@pat.Id">Delete</a>
+                    </td>
+                    
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+}
+@if (Model.Count() == 0)
+{
+    @Html.Partial("_NoData")
+}
+@Html.PagedListPager(Model, page => Url.Action("Index", "Patients", new { page = page }))
+
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            toastr.options = {
+                'closeButton': true,
+                'debug': false,
+                'newestOnTop': false,
+                'progressBar': false,
+                'positionClass': 'toast-top-right',
+                'preventDuplicates': false,
+                'showDuration': '1000',
+                'hideDuration': '1000',
+                'timeOut': '5000',
+                'extendedTimeOut': '1000',
+                'showEasing': 'swing',
+                'hideEasing': 'linear',
+                'showMethod': 'fadeIn',
+                'hideMethod': 'fadeOut',
+            }
+            $(".selectpicker").change(function (event) {
+                //console.log($(this).children("option:selected").text());
+                $("#srch").text("Order By :" + $(this).children("option:selected").text());
+                $("#searchString").change(function () {
+                    console.log($(this).val());
+                });
+            });
+
+            $("#searchForm").submit(function () {
+                var loader = $("#loadingButton").removeAttr("hidden");
+                $("#btnSubmit").replaceWith(loader).text("Searching...");
+            });
+        });
+                                //$(document).ready(function () {
+                                //    $("#patTable").DataTable();
+                                //});
+        $(".js-delete").click(function () {
+            let button = this;
+            bootbox.confirm("Are you sure to Delete??", result => {
+                if (result) {
+                    $.ajax({
+                        url: "/Patients/Delete/" + button.getAttribute("data-patid"),
+                        method: "GET",
+                        beforeSend: function () {
+                            
+                        },
+                        success: function (res) {
+
+                            toastr.error("Record Deleted");
+                            $(button).parent("td").parent("tr").remove();
+                        },
+                        complete: function () {
+                           
+                        },
+                        error: function (err) {
+                            bootbox.alert(err);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

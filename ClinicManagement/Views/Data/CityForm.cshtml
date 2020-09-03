@@ -1,0 +1,27 @@
+﻿@model ClinicManagement.Core.ViewModel.CityViewModel
+@{
+    ViewBag.Title = "CityForm";
+}
+<div class="container">
+    <div>
+        <h4 class="font-weight-bold text-primary">Manage Cities - @Model.Header</h4>
+        <h6>Add a new Location for the service.</h6>
+    </div>
+    <div>
+        @using (Html.BeginForm(Model.Action,"Data",FormMethod.Post))
+        {
+            @Html.HiddenFor(m=>m.Id)
+            <div class="form-group">
+                <label>Enter City Name</label>
+                @Html.TextBoxFor(m => m.Name, new { @class="form-control"})
+                @Html.ValidationMessageFor(m => m.Name, "", new { @class="text-danger"})
+            </div>
+            <div>
+                <button class="btn btn-primary" type="submit">@Model.Header</button>
+                <a class="btn btn-primary" href="/Data/Cities">Back</a>
+            </div>
+        }
+    </div>
+</div>
+
+

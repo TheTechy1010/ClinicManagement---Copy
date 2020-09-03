@@ -1,0 +1,188 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model IPagedList<ClinicManagement.Core.Models.Appointment>
+@{
+    ViewBag.Title = "AllAppointments";
+}
+<h3>@{
+    string head = "";
+    if (ViewBag.Type == null) { head = "All"; }
+    else
+    {
+        head = ViewBag.Type;
+    }
+    } 
+    @head Appointments</h3>
+<hr />
+@using (Html.BeginForm("AllAppointments", "Appointments", FormMethod.Get, new { id = "searchForm" }))
+{
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Order By:</label><br />
+                                        <select name="sortOrder" class="selectpicker w-100 form-control form-control-sm">
+                                            <option value="">--Select--</option>
+                                            <option value="only_pending">Pending Appointments</option>
+                                            <option value="only_approved">Approved Appointments</option>
+                                            <option value="only_rejected">Rejected Appointments</option>
+                                            <option value="name_desc">Name-Descending</option>
+                                            <option value="date">Date Added</option>
+                                        </select>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Search By:</label>
+                <input type="text" class="form-control form-control-sm" name="searchString" id="searchString" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label id="srch">Search By </label>
+            <button type="submit" id="btnSearch" class="btn btn-outline-secondary btn-sm btn-block">
+                Search
+                <img id="loadingButton" hidden src="~/Content/Images/spinner.gif" style="height:30px;width:30px;" />
+            </button>
+
+
+        </div>
+
+    </div>
+}
+
+
+
+                @if (Model.Count() == 0)
+                {
+                    @Html.Partial("_NoData")}
+                <table class="table table-borderless table-hover table-striped table-responsive-sm">
+                    <thead>
+                        <tr>
+                            <th>Token</th>
+                            <th>Patient Name</th>
+                            <th>Phone</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Doctor</th>
+                            <th>Detail</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var appt in Model)
+                        {
+                            <tr>
+                                <td>@appt.Patient.Token</td>
+                                <td>@appt.Patient.Name</td>
+                                <td>@appt.Patient.Phone</td>
+                                <td>@appt.StartDateTime.ToString("dd/MM/yyyy")</td>
+                                <td>@appt.StartDateTime.ToString("HH:mm")</td>
+                                <td>@appt.Doctor.Name</td>
+                                <td>@appt.Detail</td>
+                                @if (appt.AppointmentStatus == ClinicManagement.Core.Models.AppointmentStatus.Approved)
+                                {
+                                    <td>
+                                        <img src="~/Content/Images/appprovedIcon.png" style="height:50px;height:50px;" />
+                                    </td>
+
+                                }
+                                else if (appt.AppointmentStatus == ClinicManagement.Core.Models.AppointmentStatus.Pending)
+                                {
+                                    <td>
+                                        <img src="~/Content/Images/appprovedPending.png" style="height:50px;height:50px;" />
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        <img src="~/Content/Images/rejectedIcon.png" style="height:50px;height:50px;" />
+                                    </td>
+                                }
+                                <td>
+                                    <a class="btn btn-secondary" href="/Appointments/Details/@appt.Id" @*data-toggle="modal" data-target="#staticBackdrop"*@ data-apptid="@appt.Id">View Details</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            
+
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Understood</button>
+            </div>
+        </div>
+    </div>
+</div>
+@if (Model.Count() == 0)
+{
+    @Html.Partial("_NoData")
+}
+@Html.PagedListPager(Model, page => Url.Action("AllAppointments", "Appointments", new { page = page }))
+
+
+@section scripts
+{
+    <script>
+        $(".js-view").click(function () {
+            let button = this;
+            $.ajax({
+                url: "/Appointments/Details/" + button.getAttribute("data-apptid"),
+                contentType: "application/json",
+                method: "GET",
+                beforeSend: function () {
+
+                },
+                success: function (res) {
+                    $("#staticBackdrop").modal("show");
+                },
+                complete: function () {
+
+                },
+                error: function (err) {
+                    bootbox.alert(err);
+                }
+            });
+        });
+        $(".js-delete").click(function () {
+            let button = this;
+            bootbox.confirm("Are you sure to Delete??", result => {
+                if (result) {
+                    $.ajax({
+                        url: "/Data/DeleteCity/" + button.getAttribute("data-cityid"),
+                        method: "GET",
+                        beforeSend: function () {
+                            $("#loader").removeAttr("hidden");
+                        },
+                        success: function (res) {
+                            //bootbox.alert("Record Deleted");
+                            $(button).parent("td").parent("tr").remove();
+                        },
+                        complete: function () {
+                            $("#loader").remove();
+                            $("#complete").removeAttr("hidden");
+                        },
+                        error: function (err) {
+                            bootbox.alert(err);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

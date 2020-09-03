@@ -1,0 +1,114 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model IPagedList<ClinicManagement.Core.Models.Doctor>
+@{
+    ViewBag.Title = "All Doctors";
+}
+@using (Html.BeginForm("Index", "Doctors", FormMethod.Get, new { id = "searchForm" }))
+{
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Order By:</label><br />
+                <select name="sortOrder" class="selectpicker w-100 form-control form-control-sm">
+                    <option value="">--Select--</option>
+                    <option value="name_desc">Name-Descending</option>
+                    <option value="date">Date Added</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Search By:</label>
+                <input type="text" class="form-control form-control-sm" name="searchString" id="searchString" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label id="srch">Search By </label>
+            <button type="submit" id="btnSearch" class="btn btn-outline-primary btn-sm btn-block">
+                Search
+                <img id="loadingButton" hidden src="~/Content/Images/spinner.gif" style="height:30px;width:30px;" />
+            </button>
+
+
+        </div>
+
+    </div>
+}
+@if (ViewBag.Search != null)
+{
+    <div class="p-1">
+        <span class="text-danger">Search results for</span><h5 class="text-success">"@ViewBag.Search"</h5>
+    </div>
+}
+<table id="docTable" class="table table-striped table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Specialization</th>
+            <th>Availablity</th>
+            <th>Actions</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var doc in Model)
+        {
+            <tr>
+                <td>
+                    <a class="btn btn-link" href="/Doctors/DoctorProfile"> @doc.Name</a>
+               </td>
+                <td>@doc.Specialization.Name</td>
+                <td>
+                    @if (doc.IsAvailable)
+                    {
+                        <div class="badge-available text-center font-weight-bold text-success">
+                            Available
+                        </div>
+                    }
+                    else
+                    {
+                <div class="badge-notavailable text-center font-weight-bold text-danger">
+                    Not Available
+                </div>
+                    }
+                </td>
+                <td>
+                    <a href="#">Edit</a>
+                    <a href="#">Delete</a>
+                </td>
+                
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.Count() == 0)
+{
+    @Html.Partial("_NoData")
+}
+@Html.PagedListPager(Model, page => Url.Action("Index", "Doctors", new { page = page }))
+
+
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $(".selectpicker").change(function (event) {
+                //console.log($(this).children("option:selected").text());
+                $("#srch").text("Order By :" + $(this).children("option:selected").text());
+                $("#searchString").change(function () {
+                    console.log($(this).val());
+                });
+            });
+
+            $("#searchForm").submit(function () {
+                var loader = $("#loadingButton").removeAttr("hidden");
+                $("#btnSubmit").replaceWith(loader).text("Searching...");
+            });
+        });
+        
+
+    </script>
+}

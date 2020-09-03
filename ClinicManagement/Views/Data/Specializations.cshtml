@@ -1,0 +1,100 @@
+﻿@model IPagedList<ClinicManagement.Core.Models.Specialization>
+@{
+    ViewBag.Title = "Specializations";
+}
+@using PagedList
+@using PagedList.Mvc
+    <div>
+        <div class="float-left">
+            <h5 class="font-weight-bold text-primary">Manage Specializations</h5>
+            <h6 >Departments that are available to serve.</h6>
+            
+        </div>
+        <div class="float-right">
+            <a href="/Data/AddSpecialization" class="btn btn-outline-primary float-right">Add a Specialization</a>
+        </div>
+    </div>
+    
+<table class="table table-borderless table-hover">
+    <tr>
+        <td>Id</td>
+        <td>Name</td>
+        <td>Actions</td>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <h5>@item.Id</h5>
+            </td>
+            <td>
+                <div>
+                    <h5>@item.Name</h5>
+                    <p>@item.Description</p>
+                </div>
+
+            </td>
+            <td>
+                <a class="btn btn-outline-dark" href="/Data/EditSpecialization/@item.Id">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                    </svg>
+                    Edit
+                </a>
+                <a class="btn btn-danger js-delete text-white" data-specid="@item.Id">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z" />
+                    </svg>
+                    Delete
+                </a>
+
+            </td>
+        </tr>
+    }
+
+</table>
+@Html.PagedListPager(Model,page=>Url.Action("Specializations",new { page}))
+<div id="loader" hidden>
+
+    <img style="height:30px;width:30px;" src="~/Content/Images/spinner.gif" />
+    Deleting
+</div>
+<div id="complete" hidden>
+    <span>
+        <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-check-circle-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+        </svg>
+    </span>
+    Deleted
+</div>
+@section scripts
+{
+    <script>
+        $(".js-delete").click(function () {
+            let button = this;
+            bootbox.confirm("Are you sure to Delete??", result => {
+                if (result) {
+                    $.ajax({
+                        url: "/Data/DeleteSpec/" + button.getAttribute("data-specid"),
+                        method: "GET",
+                        beforeSend: function () {
+                            $("#loader").removeAttr("hidden");
+                        },
+                        success: function (res) {
+                            //bootbox.alert("Record Deleted");
+                            $(button).parent("td").parent("tr").remove();
+                        },
+                        complete: function () {
+                            $("#loader").remove();
+                            $("#complete").removeAttr("hidden");
+                        },
+                        error: function (err) {
+                            bootbox.alert(err);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

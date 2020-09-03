@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Html.Partial("_ViewImports")
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample08" aria-controls="navbarsExample08" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample08">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/Home/Index">
+                            <svg width="2em" height="2em" viewBox="0 0 16 16" class="bi bi-bag-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M14 5H2v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V5zM1 4v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4H1z" />
+                                <path d="M8 1.5A2.5 2.5 0 0 0 5.5 4h-1a3.5 3.5 0 1 1 7 0h-1A2.5 2.5 0 0 0 8 1.5z" />
+                                <path fill-rule="evenodd" d="M8 7.5a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5H6a.5.5 0 0 1 0-1h1.5V8a.5.5 0 0 1 .5-.5z" />
+                                <path fill-rule="evenodd" d="M7.5 10a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0v-2z" />
+                            </svg>
+                            Clinic Management <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/Patients/Index">Patients</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/Doctors/Index">Doctors</a>
+                    </li>
+                    @*<li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="http://example.com" id="dropdown08" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Manage</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdown08">
+                            <a class="dropdown-item" href="/Doctors/DoctorProfile">MyProfile</a>
+                            <a class="dropdown-item" href="/Data/Cities">Cities</a>
+                            <a class="dropdown-item" href="#">Attandances</a>
+                            <a class="dropdown-item" href="/Appointments/AllAppointments">Appointments</a>
+                            <a class="dropdown-item" href="/Data/Specializations">Specialization</a>
+                            <a class="dropdown-item" href="/Data/Cities">Localization</a>
+                        </div>
+                    </li>*@
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="http://example.com" id="dropdown08" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Register</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdown08">
+                            <a class="dropdown-item" href="/Account/RegisterDoctor">New Doctor</a>
+                            <a class="dropdown-item" href="/Patients/AddPatient">New Patient</a>
+                            <a class="dropdown-item" href="/Account/Register">New Admin</a>
+                        </div>
+                    </li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </nav>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            @*<p>&copy; DateTime.Now.Year - Developed By PREETish</p>*@
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

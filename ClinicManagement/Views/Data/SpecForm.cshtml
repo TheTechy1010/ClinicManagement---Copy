@@ -1,0 +1,33 @@
+﻿@model ClinicManagement.Core.ViewModel.SpecializationViewModel
+@{
+    ViewBag.Title = "Specialization";
+}
+<div class="container">
+    <div>
+        <h5 class="font-weight-bold text-primary">Manage Specializations - @Model.Header</h5>
+        <h6>Add a new Location for the service.</h6>
+    </div>
+    <hr/>
+    <div>
+        @using (Html.BeginForm(Model.Action, "Data", FormMethod.Post))
+        {
+            @Html.HiddenFor(m => m.Id)
+            <div class="form-group">
+                <label>Enter Specialization Name</label>
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control",placeholder="Enter specialization name" })
+                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label>Enter Description</label>
+                @Html.TextAreaFor(m => m.Description, new { @class = "form-control", placeholder = "Enter description" })
+                @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+            </div>
+            <div>
+                <button class="btn btn-primary" type="submit">@Model.Header</button>
+                <a class="btn btn-primary" href="/Data/Specializations">Back</a>
+            </div>
+        }
+    </div>
+</div>
+
+

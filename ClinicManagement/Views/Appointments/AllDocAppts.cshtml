@@ -1,0 +1,52 @@
+﻿@model IEnumerable<ClinicManagement.Core.Models.Appointment>
+
+<table class="table table-borderless table-hover table-striped table-responsive-sm">
+    <thead>
+        <tr>
+            <th>Token/Name</th>
+            <th>Phone</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Detail</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var appt in Model)
+        {
+            <tr>
+                <td>
+                    <div>
+                        @appt.Patient.Token
+                        @appt.Patient.Name
+                    </div>
+                </td>
+                <td>@appt.Patient.Phone</td>
+                <td>@appt.StartDateTime.ToString("dd/MM/yyyy")</td>
+                <td>@appt.StartDateTime.ToString("HH:mm")</td>
+                <td>@appt.Detail</td>
+                @if (appt.Status)
+                {
+                    <td>
+                        <div class="badge-available text-center font-weight-bold text-success">
+                            Approved
+                        </div>
+                    </td>
+
+                }
+                else
+                {
+                    <td>
+                        <div class="badge-notavailable text-center font-weight-bold text-danger">
+                            Pending
+                        </div>
+                    </td>
+                }
+                <td>
+                    <a class="btn btn-secondary" href="/Appointments/Details/@appt.Id">View Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

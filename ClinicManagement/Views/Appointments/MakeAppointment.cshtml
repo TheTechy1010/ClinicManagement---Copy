@@ -1,0 +1,144 @@
+﻿@model ClinicManagement.Core.ViewModel.AppointmentFormViewModel
+@{
+    ViewBag.Title = "Make new Appointment";
+}
+@if (ViewBag.ApptError != null)
+{
+    <div class="alert alert-danger">
+        <h5>@ViewBag.ApptError</h5>
+    </div>
+}
+@if (Model.DoctorsList.Count() == 0)
+{
+    <div class="card text-white bg-danger mb-3">
+        <div class="card-header">Doctor Unavailable</div>
+        <div class="card-body">
+            <h4 class="card-title">No Doctors Available to Make an Appointment</h4>
+            <p class="card-text">Sorry for the inconvinience caused. No doctors are currently available.</p>
+        </div>
+    </div>
+}
+else
+{
+    using (Html.BeginForm("MakeAppointment", "Appointments", FormMethod.Post,new { autocomplete="off"}))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Patient)
+        <div class="card">
+            <div class="card-header">
+                <h5>Make a New Appointment</h5>
+                <small>This is for registered patients only.</small>
+            </div>
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="col-md-6 col-lg-6">
+                        <h5>Doctor Info</h5>
+                        <hr />
+                        <div class="form-group">
+                            <label>Select a Doctor</label>
+                            @Html.DropDownListFor(m => m.Doctor, new SelectList(Model.DoctorsList, "Value", "Text", "Group.Name", 0), "--Select--", new { @class = "selectpicker form-control form-control-sm" })
+                            @Html.ValidationMessageFor(m => m.Doctor, "", new { @class = "text-danger" })
+                            @*<select class="selectpicker form-control" name="AppointmentFormViewModel.Doctor" id="AppointmentFormViewModel.Doctor">
+                                    <option selected>--Select--</option>
+                                    @foreach (var doc in Model.Doctors)
+                                    {
+                                        <optgroup label="@doc.Specialization.Name">
+                                            <option value="@doc.Id">
+                                                <div>
+                                                    <h5>Dr.@doc.Name</h5><br />
+                                                    (<h6 class="text-danger">Available</h6>)
+                                                </div>
+
+                                            </option>
+                                        </optgroup>
+                                    }
+                                </select>*@
+
+                            <div id="appointments">
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6">
+                        <h5>Appointment Time</h5>
+                        <hr />
+                        <div class="form-group">
+                            <label>Date</label>
+                            @Html.TextBoxFor(m => m.Date, new { @class = "form-control form-control-sm date" })
+                            @Html.ValidationMessageFor(m => m.Date, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Time</label>
+                            @Html.TextBoxFor(m => m.Time, new { @class = "form-control form-control-sm time" })
+                            @Html.ValidationMessageFor(m => m.Time, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label>Details</label>
+                            @Html.TextAreaFor(m => m.Detail, new { @class = "form-control form-control-sm" })
+                            @Html.ValidationMessageFor(m => m.Detail, "", new { @class = "text-danger" })
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 col-lg-3">
+
+                </div>
+                <div class="col-md-3 col-lg-3">
+
+                </div>
+                <div class="col-md-3 col-lg-3">
+                    <button class="custom-btn btn-1" type="submit">Request Appointment</button>
+                </div>
+                <div class="col-md-3 col-lg-3">
+                    <button class="custom-btn btn-1" type="button">Go Back</button>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $("#Doctor").change(function () {
+                var URL = "/Doctors/GetUpcomingAppointments/" + $("#Doctor").val();
+                $.ajax({
+                    url: URL,
+                    contentType: 'application/html; charset=utf-8',
+                    type: 'GET',
+                    dataType: 'html',
+                    async: true,
+                    beforeSend: function () { },
+                    success: function (list) {
+                        $("#appointments").html(list);
+                    },
+                    error: function (xhr) {
+                        alert("Error Occured");
+                    }
+                });
+            });
+
+            $('.date').datepicker({
+                minDate: 0,
+                format: "dd/mm/yyyy",
+                todayHighlight: true,
+                clearBtn: true,
+                orientation: "bottom left",
+                autoclose: true
+            });
+            $('.time').clockpicker({
+                placement: 'bottom',
+                align: 'left',
+                donetext: 'Done',
+                twentyfourhour: true
+            });
+        });
+    </script>
+}

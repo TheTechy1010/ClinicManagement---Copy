@@ -1,0 +1,69 @@
+﻿@model ClinicManagement.Core.Models.Appointment
+    <div class="jumbotron-fluid p-3 list-group">
+        <div class="list-group-item bg-light text-white">
+            <h4 class="float-left text-dark">Appointment Details</h4>
+            @if (Model.AppointmentStatus == ClinicManagement.Core.Models.AppointmentStatus.Approved)
+            {
+                <img class="float-right" src="~/Content/Images/appprovedIcon.png" style="height:50px;height:50px;" />
+            }
+            else if (Model.AppointmentStatus == ClinicManagement.Core.Models.AppointmentStatus.Pending)
+            {
+                <img class="float-right" src="~/Content/Images/appprovedPending.png" style="height:50px;height:50px;" />
+            }
+            else
+            {
+                <img class="float-right" src="~/Content/Images/rejectedIcon.png" style="height:50px;height:50px;" />
+            }
+
+
+
+        </div>
+        <div class="list-group-item">
+            <h5>Patient Name - @Model.Patient.Name</h5>
+        </div><div class="list-group-item">
+            <h5>Age -@Model.Patient.Age</h5>
+        </div><div class="list-group-item">
+            <h5>Sex -@Model.Patient.Sex</h5>
+        </div><div class="list-group-item">
+            <h5>Date & Time -@Model.StartDateTime</h5>
+        </div><div class="list-group-item">
+            <h5>Details -@Model.Detail</h5>
+        </div>
+        @if (User.IsInRole(ClinicManagement.Core.Models.RoleName.Doctor))
+        {
+            <br />
+            <h5>Appointment Status - @Model.AppointmentStatus.ToString()</h5>
+            <br/>
+            <div class="row">
+                @{ 
+                    string btnApv="",btnPen="",btnRej="";
+                }
+                @if (Model.AppointmentStatus == ClinicManagement.Core.Models.AppointmentStatus.Approved)
+                {
+                    btnApv = "disabled";
+                }
+                else if (Model.AppointmentStatus == ClinicManagement.Core.Models.AppointmentStatus.Pending)
+                {
+                    btnPen = "disabled";
+                }
+                else
+                {
+                    btnRej = "disabled";
+                }
+                <div class="col-md-4 col-lg-4">
+                    <a href="/Appointments/ApproveAppointment/@Model.Id" class="btn btn-success btn-block @btnApv">Approve Appointment</a>
+                </div>
+                <div class="col-md-4 col-lg-4">
+                    <a href="/Appointments/RejectAppointment/@Model.Id" class="btn btn-danger btn-block @btnRej">Reject Appointment</a>
+                </div>
+                <div class="col-md-4 col-lg-4">
+                    <a href="/Appointments/PendingAppointment/@Model.Id" class="btn btn-info btn-block @btnPen">Keep Pending</a>
+                </div>
+            </div>
+        }
+
+
+
+
+    </div>
+<a href="/Appointments/AllAppointments">Back to Home</a>

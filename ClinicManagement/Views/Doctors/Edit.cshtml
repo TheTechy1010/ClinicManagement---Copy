@@ -1,0 +1,83 @@
+﻿@model ClinicManagement.Core.ViewModel.DoctorFormViewModel
+@{
+    ViewBag.Title = "Register as a Doctor";
+}
+
+
+<div class="container-fluid h-100 bg-light text-dark">
+    <div class="p-2">
+        <h3>Register Doctor</h3>
+        <h6>Create a new account as a doctor.</h6>
+    </div>
+    <hr />
+
+</div>
+<div class="container-fluid h-100">
+    <div>
+        @Html.ValidationSummary()
+    </div>
+    @using (Html.BeginForm("Edit", "Doctors", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Name)
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control form-control-sm" })
+                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Address)
+                    @Html.TextBoxFor(m => m.Address, new { @class = "form-control form-control-sm" })
+                    @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Phone)
+                    @Html.TextBoxFor(m => m.Phone, new { @class = "form-control form-control-sm", type = "number" })
+                    @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-5 col-lg-5 col-xl-5">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Specialization)
+                    @Html.DropDownListFor(m => m.Specialization, new SelectList(Model.Specializations, "Id", "Name"), "--Select--", new { @class = "selectpicker form-control form-control-sm" })
+                    @Html.ValidationMessageFor(m => m.Specialization, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.IsAvailable)<br />
+                    <div class="form-check-inline">
+                        <label class="form-check-label text-success">
+                            @Html.RadioButtonFor(m => m.IsAvailable, "true")
+                            Available
+                        </label>
+                    </div>
+                    <div class="form-check-inline">
+                        <label class="form-check-label text-danger">
+                            @Html.RadioButtonFor(m => m.IsAvailable, "false")
+                            Not Available
+                        </label>
+                    </div>
+                    <br />
+                    @Html.ValidationMessageFor(m => m.IsAvailable, "", new { @class = "text-danger" })
+                </div>
+                
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary">Edit Doctor Details</button>
+            </div>
+            <div class="col-md-3">
+                <a class="btn btn-primary" href="/Home/Index">Back to Home</a>
+            </div>
+            <div class="col-md-3">
+
+            </div>
+        </div>
+    }
+</div>
+
+
